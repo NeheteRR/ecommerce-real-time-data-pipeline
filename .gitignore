@@ -1,0 +1,80 @@
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+
+# Virtual environments
+venv/
+.env
+.env.*
+
+# ===============================
+# Spark
+# ===============================
+spark-warehouse/
+checkpoint/
+checkpoints/
+tmp/
+*.crc
+
+# Spark Streaming checkpoints (very important)
+spark_checkpoints/
+*/spark_checkpoints/
+*/tmp/
+
+# ===============================
+# Kafka
+# ===============================
+kafka-logs/
+zookeeper-data/
+zookeeper-logs/
+
+# ===============================
+# Airflow
+# ===============================
+airflow.cfg
+airflow.db
+logs/
+unittests.cfg
+webserver_config.py
+
+# ===============================
+# MongoDB
+# ===============================
+data/
+dump/
+
+# ===============================
+# OS / Editor
+# ===============================
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# IntelliJ / PyCharm
+.idea/
+
+# ===============================
+# Build / Cache
+# ===============================
+*.egg-info/
+dist/
+build/
+
+# ===============================
+# Jupyter
+# ===============================
+.ipynb_checkpoints/
+
+# ===============================
+# Secrets
+# ===============================
+*.pem
+*.key
+*.crt
