@@ -1,58 +1,103 @@
-# 🛒 E-Commerce Product Management System
+# 🛒 E-Commerce Product Management System  
+### Real-Time Streaming Pipeline + CRUD Web Application
 
-## Flask + MongoDB CRUD Application
+---
 
 ## 📌 Project Overview
 
-This project is a full-stack CRUD application built using Flask and MongoDB.
-It provides both:
+This project is a **full end-to-end E-Commerce Product Management System** that demonstrates **real-time data streaming, big data processing, backend APIs, database integration, and a web interface**.
 
-🔹 RESTful APIs for Create, Read, Update, Delete (CRUD) operations
-🔹 A simple and user-friendly web interface to manage products visually
+The system ingests product data from an external API, streams it through Kafka, processes it using Spark Structured Streaming, stores it in MongoDB, and exposes the data through both **REST APIs and a user-friendly web interface** built with Flask.
 
-The application demonstrates backend development, database integration, REST API design, and a basic frontend interface using Flask templates.
+---
 
-🎯 Features
-🔧 Backend (REST API)
+---
+
+## 🎯 Features
+
+### 🔹 Real-Time Data Pipeline
+- Fetches product data from FakeStore API
+- Streams data using Apache Kafka
+- Real-time transformation using Spark Structured Streaming
+- Writes processed data into MongoDB
+- Fault-tolerant processing with Spark checkpoints
+
+---
+
+### 🔹 Backend (Flask REST APIs)
 - Create a product
 - Fetch all products
-- Fetch a product by ID
-- Update a product
-- Delete a product
-- Uses MongoDB ObjectId as the primary identifier
+- Update product by ID
+- Delete product by ID
+- Uses MongoDB `ObjectId` as the primary identifier
 
-🖥️ Frontend (Web Interface)
-- Display all products in a dashboard
-- Add new products via a form
+---
+
+### 🔹 Frontend (Web Interface)
+- View all products in a dashboard
+- Add new products using a form
 - Edit existing products
 - Delete products with confirmation popup
+- Clean and simple UI using Flask + Jinja2 templates
 
-🧰 Tech Stack
-| Layer     | Technology                         |
-|-----------|------------------------------------|
-| Backend   | Python, Flask                      |
-| Database  | MongoDB                            |
-| Frontend  | HTML, CSS, Jinja2                  |
-| Server    | Flask Development Server           |
+---
 
-📁 Project Structure
+### 🔹 Orchestration & Deployment
+- Apache Airflow for workflow orchestration
+- Docker & Docker Compose for containerized services
+- Services communicate via Docker network
+
+---
+
+## 🧰 Tech Stack
+
+| Layer          | Technology |
+|----------------|-----------|
+| Language       | Python |
+| Streaming      | Apache Kafka |
+| Processing     | Apache Spark (Structured Streaming) |
+| Database       | MongoDB |
+| Backend API    | Flask |
+| Frontend       | HTML, CSS, Jinja2 |
+| Orchestration  | Apache Airflow |
+| Containerization | Docker, Docker Compose |
+
+---
+
+## 📁 Project Structure
+
 ```bash
-crud_app/
-│── app.py
+BD_Ecommerce/
+│
+├── kafka/
+│   ├── kafka_producer.py
+│   └── kafka_consumer.py
+│
+├── spark_jobs/
+│   └── transform_products.py
+│
+├── mongodb/
+│   └── setup_collections.py
+│
+├── airflow/
+│   └── dags/
+│       └── ecommerce_etl_dag.py
 │
 ├── templates/
 │   ├── index.html      # Product dashboard
 │   ├── add.html        # Add product form
 │   └── edit.html       # Edit product form
 │
+├── app.py              # Flask API + Web Interface
+├── docker-compose.yml
+├── requirements.txt
 └── README.md
 ```
-
 ## ⚙️ Installation & Setup
 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/ecommerce-crud-flask.git
-cd ecommerce-crud-flask
+git clone https://github.com/your-username/BD_Ecommerce.git
+cd BD_Ecommerce
 ```
 
 2️⃣ Create Virtual Environment
@@ -63,31 +108,64 @@ venv\Scripts\activate
 
 3️⃣ Install Dependencies
 ```bash
-pip install flask pymongo
+pip install -r requirements.txt
 ```
 
-4️⃣ Start MongoDB
-Make sure MongoDB is running locally on:
+4️⃣ Start Services Using Docker
 ```bash
-mongodb://localhost:27018
+docker compose up -d
 ```
 
-- Database name: ecommerce_db
-- Collection name: products
+Flask Application
 
-▶️ Run the Application
+▶️ Running the Pipeline
+1. Kafka Producer
+```bash
+python kafka/kafka_producer.py
+```
+
+2. Spark Streaming Job
+```bash
+docker exec -it ec_spark \
+/opt/spark/bin/spark-submit \
+--conf spark.jars.ivy=/tmp/ivy \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.mongodb.spark:mongo-spark-connector_2.12:10.3.0 \
+/app/spark_jobs/transform_products.py
+```
+
+🌐 Flask Application
+Start Flask App
 ```bash
 python app.py
 ```
-Server will start at:
+
+
+Server runs on:
 ```bash
 http://localhost:5000
-```
 
-## 🌐 Web Interface Routes
+```
+🔗 REST API Endpoints
+
+| Method | Endpoint          | Description          |
+|--------|-------------------|----------------------|
+| POST   | `/products`       | Add product          |
+| GET    | `/products`       | Fetch all products   |
+| PUT    | `/products/<id>`  | Update product       |
+| DELETE | `/products/<id>`  | Delete product       |
+
+🖥️ Web Interface Routes
+
 | Route        | Description                          |
 |--------------|--------------------------------------|
 | `/`          | Product dashboard                    |
 | `/add`       | Add new product                      |
 | `/edit/<id>` | Edit product                         |
 | `/delete/<id>` | Delete product (with confirmation) |
+
+
+📊 MongoDB Details
+- Host: mongodb://localhost:27018
+- Database: ecommerce_db
+- Collection: products
+- ⚠️ Note: MongoDB creates databases and collections only after data insertion
