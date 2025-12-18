@@ -2,7 +2,6 @@
 ### Real-Time Streaming Pipeline + CRUD Web Application
 
 ---
-
 ## 📌 Project Overview
 
 This project is a **full end-to-end E-Commerce Product Management System** that demonstrates **real-time data streaming, big data processing, backend APIs, database integration, and a web interface**.
