@@ -9,11 +9,6 @@ MONGO_URI = "mongodb://host.docker.internal:27018"
 MONGO_DB = "ecommerce_db"
 MONGO_COLLECTION = "products"
 
-@app.route("/")
-def home():
-    return {"message": "E-commerce API is running"}
-
-
 # Define schema for product JSON
 product_schema = StructType([
     StructField("id", IntegerType(), True),
