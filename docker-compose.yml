@@ -46,6 +46,20 @@ services:
       ports:
         - "5433:5432"
 
+  spark:
+    image: apache/spark:3.5.1
+    container_name: ec_spark
+    depends_on:
+      - kafka
+      - mongodb
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sleep infinity
+    networks:
+      - default
+
+
   airflow-webserver:
       image: apache/airflow:2.7.3
       container_name: ec_airflow_webserver
