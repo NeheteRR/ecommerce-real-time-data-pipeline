@@ -11,8 +11,6 @@ The system ingests product data from an external API, streams it through Kafka, 
 
 ---
 
----
-
 ## 🎯 Features
 
 ### 🔹 Real-Time Data Pipeline
