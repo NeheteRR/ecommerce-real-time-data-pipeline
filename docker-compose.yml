@@ -1,0 +1,97 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: ec_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: ec_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: ec_zookeeper:2181
+
+      # LISTENERS
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ec_kafka:9092
+
+      # REQUIRED
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+  mongodb:
+    image: mongo:6.0
+    container_name: ec_mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  postgres:
+      image: postgres:13
+      container_name: ec_postgres
+      
+      environment:
+        POSTGRES_USER: airflow
+        POSTGRES_PASSWORD: airflow
+        POSTGRES_DB: airflow
+      ports:
+        - "5433:5432"
+
+  airflow-webserver:
+      image: apache/airflow:2.7.3
+      container_name: ec_airflow_webserver
+      user: "50000:0"
+      depends_on:
+        - kafka
+        - mongodb
+        - postgres
+      environment:
+        AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+        _PIP_ADDITIONAL_REQUIREMENTS: requests kafka-python pymongo
+        AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      volumes:
+        - ./dags:/opt/airflow/dags
+        - ./logs:/opt/airflow/logs
+        - ./plugins:/opt/airflow/plugins
+      ports:
+        - "8081:8080"
+      command: >
+        bash -c "
+        airflow db migrate &&
+        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+        airflow webserver"
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.3
+    container_name: ec_airflow_scheduler
+    user: "50000:0"
+    depends_on:
+      - airflow-webserver
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      _PIP_ADDITIONAL_REQUIREMENTS: requests kafka-python pymongo
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow scheduler
+      "
+
+
+volumes:
+  mongo_data:

@@ -11,6 +11,7 @@ def fetch_and_publish():
     data = response.json()
     producer = KafkaProducer(
         bootstrap_servers=KAFKA_BROKER,
+        api_version=(3, 5, 0),
         value_serializer=lambda v: json.dumps(v).encode("utf-8")
     )
     for product in data:

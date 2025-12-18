@@ -3,9 +3,9 @@ from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType
 
 # Kafka + Mongo config
-KAFKA_BROKER = "localhost:9092"
+KAFKA_BROKER = "ec_kafka:9092"
+MONGO_URI = "mongodb://localhost:27018"
 KAFKA_TOPIC = "products_raw"
-MONGO_URI = "mongodb://localhost:27017"
 MONGO_DB = "ecommerce_db"
 MONGO_COLLECTION = "products"
 

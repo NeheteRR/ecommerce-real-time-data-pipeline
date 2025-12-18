@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 # MongoDB connection
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = "mongodb://localhost:27018"
 DB_NAME = "ecommerce_db"
 COLLECTION_NAME = "products"
 

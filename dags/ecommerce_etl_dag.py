@@ -35,7 +35,7 @@ with DAG(
     def publish_to_kafka(products):
         """Publish product data to Kafka."""
         producer = KafkaProducer(
-            bootstrap_servers=KAFKA_BROKER,
+            bootstrap_servers="ec_kafka:9092",
             value_serializer=lambda v: json.dumps(v).encode("utf-8")
         )
         for product in products:

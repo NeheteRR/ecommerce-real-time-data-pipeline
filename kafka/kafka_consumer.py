@@ -1,27 +1,27 @@
 from kafka import KafkaConsumer
 import json
+import os
 
-# Kafka Config
-KAFKA_BROKER = "localhost:9092"
+# If running on host → localhost:29092
+# If running inside Docker → ec_kafka:9092
+KAFKA_BROKER = os.getenv("KAFKA_BROKER", "localhost:29092")
 KAFKA_TOPIC = "products_raw"
 
 def consume_messages():
-    # Consumer subscribes to the topic
     consumer = KafkaConsumer(
         KAFKA_TOPIC,
         bootstrap_servers=KAFKA_BROKER,
-        auto_offset_reset="earliest",   # read from beginning
+        api_version=(3, 5, 0),
+        auto_offset_reset="earliest",
         enable_auto_commit=True,
         group_id="ecommerce-consumer-group",
         value_deserializer=lambda x: json.loads(x.decode("utf-8"))
     )
 
-    print(f"Listening for messages on topic: {KAFKA_TOPIC}...")
+    print(f"Listening on {KAFKA_BROKER}, topic={KAFKA_TOPIC}")
 
-    # Continuously poll messages
     for message in consumer:
-        product = message.value
-        print(f"Received product: {json.dumps(product, indent=2)}")
+        print(json.dumps(message.value, indent=2))
 
 if __name__ == "__main__":
     consume_messages()
